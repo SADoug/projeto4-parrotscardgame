@@ -8,9 +8,17 @@ let relogio
 let myTimer
 
 function pairCheck () {
-    let numbersofcards = parseInt(prompt("Quantas cartas voçê deseja de 4 a 14?"));
-    while (numbersofcards%2 !== 0 || numbersofcards < 4 || numbersofcards > 14){
+    let numbersofcards = 0;
+    /*while (numbersofcards % 2 === 1 || numbersofcards < 4 || numbersofcards > 14){
+        numbersofcards = parseInt(prompt("Quantas cartas voçê deseja de 4 a 14?"));*/
+
+    do {
         numbersofcards = parseInt(prompt("Quantas cartas voçê deseja de 4 a 14?"));
+
+        const isNumberEven = (numbersofcards % 2) === 1
+        const isNumberOnRange = (numbersofcards >= 4 && numbersofcards <= 14)
+        isNumberValid = (isNumberEven && isNumberOnRange)
+    } while (isNumberValid)
 
         let deck = cartas.slice(0,numbersofcards); // Cria-se a partir das cartas disponíveis um array com o número de cartas escolhido pelo usuário 
         deck.sort(() => Math.random() - 0.5); // Após esta linha, a minhaArray estará embaralhada
@@ -38,7 +46,7 @@ function pairCheck () {
             relogio.innerHTML = tempo
         }, 1000);
     }
-}  
+
 function viraCarta (carta) {
     if(!lock && !carta.classList.contains("flip")){ // Verifica se a carta ja está virada ou se está em lock (será explicado a frente)
         carta.classList.add("flip") // Vira a carta
@@ -95,6 +103,7 @@ function verificaFim () {
     }
     return fim
 }
+
 
 pairCheck();
 
