@@ -17,9 +17,9 @@ function pairCheck () {
         console.log(deck)
         let conteudo=''
         for (let i=0;i<deck.length;i++){
-            conteudo+=`<div data-identifier="card" class="carta" onclick="">
-            <div data-identifier=ront-face" class="cartaFrente"><img src="front.png"></div>
-            <div data-identifier="back-face" class="cartaTras"><img src="front.png"></div>
+            conteudo+=`<div data-identifier="card" class="carta" onclick="viraCarta(this)">
+            <div data-identifier=ront-face" class="cartaFrente"><img src='./Arquivos/${deck[i]}.gif'></div>
+            <div data-identifier="back-face" class="cartaTras"><img src='front.png'></div>
             </div>`
         }
         document.querySelector("main").innerHTML=conteudo; // Mostra as cartas ja embaralhadas no arquivo HTML
@@ -39,53 +39,64 @@ function pairCheck () {
         }, 1000);
     }
 }  
-     
+function viraCarta (carta) {
+    if(!lock && !carta.classList.contains("flip")){ // Verifica se a carta ja está virada ou se está em lock (será explicado a frente)
+        carta.classList.add("flip") // Vira a carta
+        if (!primeiraCarta){ 
+            primeiraCarta = carta.querySelector(".cartaFrente img"); // Seleciona a primeira carta
+        }else if(!segundaCarta){
+            segundaCarta = carta.querySelector(".cartaFrente img"); // Seleciona a segunda carta
+            if (primeiraCarta.src == segundaCarta.src){ // verifica se as duas cartas tem a mesma imagem
+                 console.log("deu match");
+                primeiraCarta.parentNode.parentNode.classList.add("match"); // Guarda a informção que a carta ja tem um par
+                segundaCarta.parentNode.parentNode.classList.add("match"); // Guarda a informção que a carta ja tem um par
+                primeiraCarta=null; 
+                segundaCarta=null;
+                contador++; // adiciona 1 no contador de jogadas
+                if (verificaFim()){ // verifica se o jogo já terminou
+                    clearInterval(myTimer); // encerra o cronômetro na tela
+                    setTimeout( () => {
+                        alert(`acabou em ${contador*2} jogadas e em ${document.querySelector("header p").innerHTML} segundos!`); // emite um alerta com o numero de jogadas e o tempo que o usuário levou
+                        let novamente=prompt("quer jogar novamente? (s ou n)") ; // pergunta se o usuário quer jogar novamente
+                        while (novamente!=="s" && novamente !== "n" && novamente!== null){ // verifica se foi uma resposta válida
+                            let novamente=prompt("quer jogar novamente? (s ou n)");
+                        }
+                        if(novamente=="s"){ // caso responda com "s" o jogo reinicia
+                            iniciar();
+                        }
+
+                    },100);     
+                }
+            }else{ // caso as duas cartas não tenham a mesma imagem
+                // console.log("nao");
+                lock=true; // nao permite que o jogador selecione outras cartas
+                setTimeout( () => {
+                    primeiraCarta.parentNode.parentNode.classList.remove("flip"); // desvira as cartas
+                    segundaCarta.parentNode.parentNode.classList.remove("flip"); // desvira as cartas
+                    primeiraCarta=null;
+                    segundaCarta=null;
+                    lock=false; // permite que o jogador selecione outras cartas
+                },1000); // deixa as cartas viradas por 1 segundo
+                contador++;
+            }
+        }
+        // console.log(verificaFim());
+    }
+}
+function verificaFim () {
+    // verifica se o jogo já terminou 
+    // retorna true se todas as cartas do tabuleiro estiverem viradas
+    let fim = true;
+    let cartas = document.querySelectorAll(".carta");
+    for (carta of cartas){
+        if (!carta.classList.contains("flip")){
+            fim=false
+        }
+    }
+    return fim
+}
+
 pairCheck();
-/*
-
-function addCards(){
-    const cardList = [];
-    pairCheck();
-    for(let count = o; count < checkedNumber; count = count + 1) {
-        const cardscontainer = document.querySelector('Container-Cards')
-        cardscontainer.innerHTML += 
-    }
-}
-
-/*
-function pairCheck (){
-if (numbersofcards%2 === 0 || numbersofcards > 3 || numbersofcards < 15) {
-   let checkedNumber = numbersofcards;
-    return checkedNumber;
-    alert ("working")
-} else {
-   return numbersofcards = prompt("Quantas cartas voçê deseja de 4 a 14?");
-   alert("hmm")
-}
-}
-pairCheck ();
-
-
-
-
-
-/*
-function addCards(){
-    const cardList = [];
-    pairCheck();
-    for(let count = o; count < checkedNumber; count = count + 1) {
-        const cardscontainer = document.querySelector('Container-Cards')
-        cardscontainer.innerHTML += `
-    }
-}
-
-let cont = 0 //4 é o minimo de entrada
-while (cont <= checkedNumber ) {
-    const cardadd = document.querySelector("Container-Cards"); //put inside the WHILE the act to add a card to the respective Div
-                                       //every card have two sides remember to create the card that two sides
-                                       // const tare
-}   */
-
 
 
 
